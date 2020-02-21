@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>HTML5 Game Development Tutorial | Spicy Yoghurt</title>
+    <meta name="description" content="HTML5 game development tutorial">
+    <meta name="author" content="Spicy Yoghurt">
+</head>
+
+<body>
+    <canvas id="canvas" width="750" height="400" style="border:1px solid lightgrey;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <script>
+        "use strict";
+
+        // Declare as variable
+        var canvas;
+        var context;
+        var GAME_WIDTH = 750;
+        var GAME_HIGHT = 400;
+
+        // Listen to the onLoad event
+        window.onload = init;
+
+        // Trigger init function when the page has loaded
+        function init() {
+            canvas = document.getElementById('canvas');
+            context = canvas.getContext('2d');
+            ball.init();
+
+            // Request an animation frame for the first time
+            // The gameLoop() function will be called as a callback of this request
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop(timeStamp) {
+            // Perform the drawing operation
+            update();
+            draw();
+
+            // The loop function has reached it's end
+            // Keep requesting new frames
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+          //context.clearRect(0,0,750,400);
+          ball.update();
+        }
+
+        function draw() {
+            ball.draw();
+        }
+
+        var ball = {
+
+          x : 0,
+          y : 0,
+          vX : 1,
+          vY : 1,
+          h : 10,
+          w : 10,
+
+          draw : function () {
+              context.fillRect(this.x, this.y, this.w, this.h);
+          },
+
+          init : function () {
+            console.log(this.x);
+          },
+
+          update : function () {
+            if((this.x + this.w) + this.vX > GAME_WIDTH) {
+              this.vX = -1;
+              console.log('collision right border');
+            }
+            if (this.x + this.vX <= 0) {
+              this.vX = 1;
+            }
+
+            if (this.y + this.vY <= 0) {
+              console.log('collision top border');
+              this.vY = 1;
+            }
+
+            if ((this.y + this.h) + this.vY > GAME_HIGHT) {
+              console.log('collision bottom');
+              this.vY = -1;
+            }
+
+            this.x += this.vX;
+            this.y += this.vY;
+          }
+        }
+    </script>
+</body>
+
+</html>
