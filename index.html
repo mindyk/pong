@@ -10,70 +10,120 @@
 </head>
 
 <body>
-    <canvas id="canvas" width="750" height="400" style="border:1px solid lightgrey;">
-        Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <script src="js/mainloop.js"></script>
-    <script src="js/ball.js"></script>
-    <script src="js/player.js"></script>
-    <script>
-        const COLOR_DEFAULT = '#000';
-        const COLOR_HIT = '#F00';
-        // Declare as variable
-        var canvas;
-        var context;
-        var GAME_WIDTH = 750;
-        var GAME_HEIGHT = 400;
-        var IS_KEY_DOWN = true;
+<canvas id="canvas" width="750" height="400" style="border:1px solid lightgrey;">
+    Your browser does not support the HTML5 canvas tag.
+</canvas>
+<script src="js/mainloop.js"></script>
 
-        // Listen to the onLoad event
-        window.onload = init;
+<script>
+    const COLOR_DEFAULT = '#000';
+    const COLOR_HIT = '#F00';
+    const STATE_PLAY = 1;
+    const STATE_OVER = 99;
 
-        // Trigger init function when the page has loaded
-        function init() {
-            canvas = document.getElementById('canvas');
-            context = canvas.getContext('2d');
-            ball.init();
+    // Declare as variable
+    var canvas,
+        context,
+        GAME_WIDTH = 750,
+        GAME_CENTER_X = GAME_WIDTH /2,
+        GAME_HEIGHT = 400,
+        GAME_CENTER_Y = GAME_HEIGHT /2,
 
-            MainLoop.setUpdate(update).setDraw(draw).start();
+        GAME_STATE = 1;
+
+    // Listen to the onLoad event
+    window.onload = init;
+
+    // Trigger init function when the page has loaded
+    function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+        ball.init();
+
+        MainLoop.setUpdate(update).setDraw(draw).start();
+    }
+
+
+    function update() {
+        if (GAME_STATE == STATE_PLAY) {
+            ball.update();
+            p1.update();
+            p2.update();
         }
 
+    }
 
+    function draw() {
+        context.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-        function update() {
-          context.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
-          ball.update();
-          p1.update();
-        }
-
-        function draw() {
+        if (GAME_STATE == STATE_PLAY) {
             ball.draw();
             p1.draw();
+            p2.draw();
         }
 
+        if (GAME_STATE == STATE_OVER) {
 
-        document.onkeydown = function (e) {
-            IS_KEY_DOWN = true;
-            switch (e.code) {
-                case 'KeyS':
-                    console.log('down');
-                    p1.vY += 2;
-                    break;
-                    case 'KeyW':
-                        console.log('up');
-                        p1.vY -= 2;
-                        break;
-                    default:
-                        console.log(e.code);
-            }
-        };
-
-        document.onkeyup = function (e) {
-            IS_KEY_DOWN = false;
-        };
+        }
+    }
 
 
-    </script>
+    document.onkeydown = function (e) {
+        switch (e.code) {
+            case 'KeyS':
+            case 'KeyW':
+                p1.keydown = true;
+                break;
+            case 'ArrowUp':
+            case 'ArrowDown':
+                p2.keydown = true;
+                break;
+        }
+
+        switch (e.code) {
+            case 'KeyS':
+                console.log('p1down');
+                p1.vY += PLAYER_VELOCITY;
+
+                break;
+            case 'KeyW':
+                console.log('p1 up');
+                p1.vY -= PLAYER_VELOCITY;
+                break;
+            case 'ArrowUp':
+                p2.vY -= PLAYER_VELOCITY;
+                break;
+            case 'ArrowDown':
+                p2.vY += PLAYER_VELOCITY;
+                break;
+            default:
+                console.log(e.code);
+        }
+    };
+
+    document.onkeyup = function (e) {
+
+        switch (e.code) {
+            case 'KeyS':
+            case 'KeyW':
+                p1.keydown = false;
+                break;
+            case 'ArrowUp':
+            case 'ArrowDown':
+                p2.keydown = false;
+                break;
+        }
+    };
+
+    function change_state(new_state) {
+        console.log('change_state', GAME_STATE, new_state);
+        GAME_STATE = new_state;
+    }
+
+
+</script>
+<script src="js/ball.js"></script>
+<script src="js/player.js"></script>
 </body>
 
 </html>
